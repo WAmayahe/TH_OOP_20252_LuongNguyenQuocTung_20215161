@@ -1,0 +1,64 @@
+TRƯỜNG ĐẠI HỌC BÁCH KHOA HÀ NỘI
+Viện Công nghệ Thông tin và Truyền thông (SoICT)
+------------------------------------------------------------
+HỌC PHẦN: Lập trình hướng đối tượng (IT3100E / IT3103)
+BÁO CÁO LAB 04: Kế thừa và Đa hình (Inheritance and Polymorphism)
+HỌ VÀ TÊN SINH VIÊN: Lương Nguyễn Quốc Tùng
+MÃ SỐ SINH VIÊN (MSSV): 20215161
+MÃ LỚP THỰC HÀNH: TH_OOP_20252
+------------------------------------------------------------
+
+========================================================================
+PHẦN 1: KẾ THỪA VÀ LỚP TRỪU TƯỢNG (INHERITANCE AND ABSTRACT CLASSES)
+========================================================================
+
+Question 1: Why do we make the Media class an abstract class?
+Trả lời:
+- Lớp Media đại diện cho khái niệm cốt lõi, tổng quát của một sản phẩm trong cửa hàng.
+- Trong thực tế nghiệp vụ, chúng ta không bao giờ khởi tạo một đối tượng "Media" chung chung; thay vào đó, chúng ta chỉ tạo ra các thực thể cụ thể như Sách (Book), Đĩa DVD (DigitalVideoDisc), hoặc Đĩa CD (CompactDisc).
+- Việc khai báo lớp Media là 'abstract' (trừu tượng) giúp ngăn chặn việc khởi tạo sai logic bằng lệnh 'new Media(...)', đồng thời vẫn cho phép gom nhóm các thuộc tính dùng chung (id, title, category, cost) và các phương thức chung (getters, toString, equals) vào một lớp cha để tái sử dụng mã nguồn.
+
+Question 2: Why do we make the Disc class an abstract class?
+Trả lời:
+- Tương tự như Media, lớp Disc đóng vai trò là một cấp khái quát hóa trung gian cho tất cả các loại đa phương tiện dạng đĩa (DVD và CD) có chung các đặc tính vật lý như thời lượng (length) và đạo diễn (director).
+- Vì không có sản phẩm thương mại nào chỉ tên là "Disc" mà không thuộc loại cụ thể là DVD hay CD, việc đặt lớp này là trừu tượng giúp đảm bảo tính đúng đắn của sơ đồ phân cấp thiết kế hệ thống và ngăn chặn việc tạo đối tượng Disc trực tiếp.
+
+========================================================================
+PHẦN 2: ĐA HÌNH VÀ GIAO DIỆN (POLYMORPHISM AND INTERFACES)
+========================================================================
+
+Question 3: What is the purpose of the Playable interface? Why not put the play() method directly inside the Media class?
+Trả lời:
+- Phương thức play() đại diện cho một hành động phát nội dung, hành động này chỉ có thể thực hiện được trên các phương tiện có thể phát dòng dữ liệu (streamable/playable) như đĩa DVD và đĩa CD.
+- Lớp Sách (Book) là một lớp con của Media, nhưng sách thì không thể "phát" (play) được (sách chỉ có thể đọc).
+- Nếu chúng ta đặt phương thức play() trực tiếp bên trong lớp cha Media, lớp Book sẽ bắt buộc phải kế thừa nó. Điều này dẫn đến việc lớp Book phải triển khai một hành vi không hợp lệ về mặt logic hoặc không được hỗ trợ.
+- Do đó, việc tách riêng interface 'Playable' giúp tách biệt hoàn toàn năng lực "có thể phát" và chỉ áp dụng một cách chọn lọc cho các lớp thực sự hỗ trợ (DVD, CD, Track).
+
+Question 4: How does Polymorphism manifest in the Cart and Store classes in Lab 04?
+Trả lời:
+- Ở các bài Lab trước, các lớp Cart và Store chỉ có thể lưu trữ danh sách các đối tượng cố định dạng 'DigitalVideoDisc' thông qua một danh sách cụ thể (ví dụ: ArrayList<DigitalVideoDisc>).
+- Trong Lab 04, tận dụng tính Đa hình (Polymorphism), cả Cart và Store đều chuyển sang sử dụng 'ArrayList<Media>'. Danh sách duy nhất này giờ đây có thể chứa đồng thời mọi đối tượng thuộc lớp con của Media (Book, DigitalVideoDisc, CompactDisc).
+- Khi gọi các phương thức như 'toString()' hoặc tương tác với các phần tử trong vòng lặp, Java sẽ tự động phân giải và gọi chính xác phương thức của đối tượng thực thể cụ thể tại thời điểm chạy chương trình (Đa hình tại thời điểm chạy - Runtime Polymorphism).
+
+========================================================================
+PHẦN 3: SẮP XẾP VÀ BỘ SO SÁNH (SORTING AND COMPARATORS)
+========================================================================
+
+Question 5: What is the difference between Comparable and Comparator in Java? How are they applied here?
+Trả lời:
+- 'Comparable' được sử dụng để định nghĩa một thứ tự sắp xếp tự nhiên, mặc định của một lớp bằng cách triển khai phương thức 'compareTo' ngay bên trong chính lớp đó.
+- 'Comparator' được sử dụng để định nghĩa nhiều chiến lược sắp xếp khác nhau từ bên ngoài mà không cần phải can thiệp hay sửa đổi mã nguồn của lớp gốc.
+- Trong Lab 04, đặc tả yêu cầu người dùng phải có khả năng tùy chọn sắp xếp giỏ hàng linh hoạt theo hai tiêu chí hoàn toàn khác nhau khi ứng dụng đang chạy:
+  1. Sắp xếp theo Tiêu đề (Title) trước, nếu trùng thì xét theo Giá (Cost) giảm dần (triển khai trong MediaComparatorByTitleCost).
+  2. Sắp xếp theo Giá (Cost) trước, nếu trùng thì xét theo Tiêu đề (Title) tăng dần (triển khai trong MediaComparatorByCostTitle).
+- Sử dụng hằng số 'java.util.Comparator' giúp đóng gói các thuật toán sắp xếp độc lập này thành các lớp riêng biệt và truyền chúng trực tiếp vào hàm sắp xếp hệ thống 'Collections.sort()'.
+
+========================================================================
+PHẦN 4: LOGIC GIAO DIỆN MENU (MENU-BASED UI LOGIC)
+========================================================================
+
+Question 6: How does the application handle a situation where a user tries to play a Book from the Store or Cart?
+Trả lời:
+- Trước khi gọi phương thức play() trên bất kỳ đối tượng Media nào được người dùng chọn từ menu, hệ thống sẽ tiến hành kiểm tra xem đối tượng đó có thực hiện giao diện Playable hay không bằng toán tử 'instanceof':
+  'if (media instanceof Playable) { ((Playable)media).play(); }'
+- Nếu đối tượng thuộc lớp Sách (Book) - vốn là lớp không thực hiện giao diện Playable, ứng dụng sẽ chủ động chặn hành động này lại và đưa ra cảnh báo tường minh trên màn hình console: "Hành động lỗi: Sản phẩm được chọn là Sách. Sách không thể phát nội dung!" thay vì để chương trình bị sập do lỗi ép kiểu sai (ClassCastException).
